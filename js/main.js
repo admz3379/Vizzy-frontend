@@ -110,10 +110,31 @@ async function handleFileUpload(file) {
         const isAuthenticated = window.VizzyAPI && window.VizzyAPI.AuthManager.isAuthenticated();
         
         if (!isAuthenticated) {
-            // For unauthenticated users, show demo results after animation
-            setTimeout(function() {
-                showScanResults(null); // Show demo data
-            }, 2500);
+            // For unauthenticated users, use quick-analysis endpoint (free lead magnet)
+            const formData = new FormData();
+            formData.append('resume', file);
+            
+            const response = await fetch(`${API_BASE_URL}/resumes/quick-analysis`, {
+                method: 'POST',
+                body: formData
+                // No Authorization header needed
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Analysis failed');
+            }
+            
+            const result = await response.json();
+            
+            // Show basic analysis with upgrade prompt
+            if (result.data.analysis) {
+                showScanResults(result.data.analysis);
+            } else {
+                throw new Error('No analysis data received');
+            }
+            
+            console.log('✅ Free analysis completed:', result.data);
             return;
         }
         
@@ -211,6 +232,16 @@ function displayDetailedAnalysis(analysis) {
             `;
             insightsContainer.appendChild(insightItem);
         });
+        
+        // Show upgrade message for free preview
+        if (analysis.is_free_preview && analysis.upgrade_message) {
+            const upgradeItem = document.createElement('div');
+            upgradeItem.style.cssText = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: 500;';
+            upgradeItem.innerHTML = `
+                <i class="fas fa-star"></i> ${analysis.upgrade_message}
+            `;
+            insightsContainer.appendChild(upgradeItem);
+        }
     }
     
     // Display breakdown scores
@@ -245,6 +276,15 @@ function displayDetailedAnalysis(analysis) {
         const detectedSkills = document.getElementById('detectedSkills');
         if (detectedSkills && analysis.detected_skills && analysis.detected_skills.length > 0) {
             detectedSkills.innerHTML = '';
+            
+            // Show limited message for free preview
+            if (analysis.is_free_preview) {
+                const limitMessage = document.createElement('span');
+                limitMessage.style.cssText = 'background: #edf2f7; color: #4a5568; padding: 6px 12px; border-radius: 16px; font-size: 13px; font-weight: 500; font-style: italic;';
+                limitMessage.textContent = `Showing ${analysis.detected_skills.length} of all skills - Sign up to see more!`;
+                detectedSkills.appendChild(limitMessage);
+            }
+            
             analysis.detected_skills.forEach(skill => {
                 const tag = document.createElement('span');
                 tag.style.cssText = 'background: #48bb78; color: white; padding: 6px 12px; border-radius: 16px; font-size: 13px; font-weight: 500;';
@@ -257,6 +297,15 @@ function displayDetailedAnalysis(analysis) {
         const missingKeywords = document.getElementById('missingKeywords');
         if (missingKeywords && analysis.missing_keywords && analysis.missing_keywords.length > 0) {
             missingKeywords.innerHTML = '';
+            
+            // Show limited message for free preview
+            if (analysis.is_free_preview) {
+                const limitMessage = document.createElement('span');
+                limitMessage.style.cssText = 'background: #edf2f7; color: #4a5568; padding: 6px 12px; border-radius: 16px; font-size: 13px; font-weight: 500; font-style: italic;';
+                limitMessage.textContent = `Showing ${analysis.missing_keywords.length} missing keywords - Sign up for full list!`;
+                missingKeywords.appendChild(limitMessage);
+            }
+            
             analysis.missing_keywords.slice(0, 8).forEach(keyword => {
                 const tag = document.createElement('span');
                 tag.style.cssText = 'background: #fed7d7; color: #c53030; padding: 6px 12px; border-radius: 16px; font-size: 13px; font-weight: 500;';

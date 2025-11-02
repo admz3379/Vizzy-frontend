@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add scroll effects
     initScrollEffects();
+    
+    // Check if user was redirected back after login for checkout
+    checkForCheckoutRedirect();
 });
 
 // ==============================================
@@ -472,6 +475,41 @@ async function subscribeToPro() {
     } catch (error) {
         console.error('Subscription error:', error);
         alert('Error: ' + error.message);
+    }
+}
+
+// Check if user was redirected back after login for checkout
+async function checkForCheckoutRedirect() {
+    // Wait for VizzyAPI to load
+    if (typeof window.VizzyAPI === 'undefined') {
+        setTimeout(checkForCheckoutRedirect, 100);
+        return;
+    }
+    
+    // Check URL parameters for subscribe parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const subscribePlan = urlParams.get('subscribe');
+    
+    if (subscribePlan && window.VizzyAPI.AuthManager.isAuthenticated()) {
+        console.log(`🎯 User authenticated and ready to subscribe to ${subscribePlan} plan`);
+        
+        // Clean up URL (remove subscribe parameter)
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+        
+        // Slight delay to ensure everything is loaded
+        setTimeout(async () => {
+            try {
+                if (subscribePlan === 'basic') {
+                    await subscribeToBasic();
+                } else if (subscribePlan === 'pro') {
+                    await subscribeToPro();
+                }
+            } catch (error) {
+                console.error('Auto-subscribe error:', error);
+                alert('Error initiating checkout: ' + error.message);
+            }
+        }, 500);
     }
 }
 

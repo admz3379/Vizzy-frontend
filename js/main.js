@@ -130,16 +130,31 @@ async function handleFileUpload(file) {
         });
         
         if (!response.ok) {
-            throw new Error('Upload failed');
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Upload failed');
         }
         
         const result = await response.json();
         
-        // Show results with actual data
-        showScanResults(result.data);
+        // Store resume ID for future use
+        if (result.data.resume && result.data.resume.id) {
+            localStorage.setItem('last_resume_id', result.data.resume.id);
+        }
+        
+        // Show results with actual data from backend
+        if (result.data.analysis) {
+            showScanResults(result.data.analysis);
+        } else {
+            // Fallback to demo if no analysis returned
+            showScanResults(null);
+        }
+        
+        console.log('✅ Resume uploaded successfully:', result.data);
     } catch (error) {
-        console.error('Upload error:', error);
-        // On error, show demo results
+        console.error('❌ Upload error:', error);
+        alert(`Upload failed: ${error.message}. Showing demo results.`);
+        
+        // On error, show demo results after short delay
         setTimeout(function() {
             showScanResults(null);
         }, 500);
@@ -167,10 +182,109 @@ function showScanResults(data = null) {
     // Animate the score
     animateScore(score);
     
-    // If we have real data, we could update insights here
+    // Display real analysis data
     if (data) {
-        // Future enhancement: Update insight items with real data
         console.log('Resume analysis data:', data);
+        displayDetailedAnalysis(data);
+    } else {
+        // Show demo insights for unauthenticated users
+        displayDemoInsights();
+    }
+}
+
+function displayDetailedAnalysis(analysis) {
+    // Display insights
+    const insightsContainer = document.getElementById('insightsContainer');
+    if (insightsContainer && analysis.insights) {
+        insightsContainer.innerHTML = '';
+        analysis.insights.forEach(insight => {
+            const insightItem = document.createElement('div');
+            insightItem.className = `insight-item ${insight.type === 'success' ? 'good' : insight.type === 'error' ? 'error' : 'warning'}`;
+            
+            const iconClass = insight.type === 'success' ? 'fa-check-circle' : 
+                            insight.type === 'error' ? 'fa-times-circle' : 
+                            'fa-exclamation-triangle';
+            
+            insightItem.innerHTML = `
+                <i class="fas ${iconClass}"></i>
+                <span>${insight.message}</span>
+            `;
+            insightsContainer.appendChild(insightItem);
+        });
+    }
+    
+    // Display breakdown scores
+    const analysisBreakdown = document.getElementById('analysisBreakdown');
+    if (analysisBreakdown && analysis.breakdown) {
+        analysisBreakdown.style.display = 'block';
+        
+        // Update each score
+        if (analysis.breakdown.formatting) {
+            document.getElementById('formatScore').textContent = analysis.breakdown.formatting.score;
+        }
+        if (analysis.breakdown.keywords) {
+            document.getElementById('keywordScore').textContent = analysis.breakdown.keywords.score;
+        }
+        if (analysis.breakdown.content) {
+            document.getElementById('contentScore').textContent = analysis.breakdown.content.score;
+        }
+        if (analysis.breakdown.structure) {
+            document.getElementById('structureScore').textContent = analysis.breakdown.structure.score;
+        }
+        if (analysis.breakdown.achievements) {
+            document.getElementById('achievementScore').textContent = analysis.breakdown.achievements.score;
+        }
+    }
+    
+    // Display detected skills
+    const keywordsSection = document.getElementById('keywordsSection');
+    if (keywordsSection && (analysis.detected_skills || analysis.missing_keywords)) {
+        keywordsSection.style.display = 'block';
+        
+        // Detected skills
+        const detectedSkills = document.getElementById('detectedSkills');
+        if (detectedSkills && analysis.detected_skills && analysis.detected_skills.length > 0) {
+            detectedSkills.innerHTML = '';
+            analysis.detected_skills.forEach(skill => {
+                const tag = document.createElement('span');
+                tag.style.cssText = 'background: #48bb78; color: white; padding: 6px 12px; border-radius: 16px; font-size: 13px; font-weight: 500;';
+                tag.textContent = skill;
+                detectedSkills.appendChild(tag);
+            });
+        }
+        
+        // Missing keywords
+        const missingKeywords = document.getElementById('missingKeywords');
+        if (missingKeywords && analysis.missing_keywords && analysis.missing_keywords.length > 0) {
+            missingKeywords.innerHTML = '';
+            analysis.missing_keywords.slice(0, 8).forEach(keyword => {
+                const tag = document.createElement('span');
+                tag.style.cssText = 'background: #fed7d7; color: #c53030; padding: 6px 12px; border-radius: 16px; font-size: 13px; font-weight: 500;';
+                tag.textContent = keyword;
+                missingKeywords.appendChild(tag);
+            });
+        }
+    }
+}
+
+function displayDemoInsights() {
+    // Show demo insights for free users
+    const insightsContainer = document.getElementById('insightsContainer');
+    if (insightsContainer) {
+        insightsContainer.innerHTML = `
+            <div class="insight-item good">
+                <i class="fas fa-check-circle"></i>
+                <span>Clear structure and formatting</span>
+            </div>
+            <div class="insight-item warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Missing industry keywords</span>
+            </div>
+            <div class="insight-item warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Skills section needs optimization</span>
+            </div>
+        `;
     }
 }
 

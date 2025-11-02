@@ -135,19 +135,56 @@
                             <div class="score-number" id="scoreNumber">0</div>
                             <div class="score-label">/ 100</div>
                         </div>
-                        <div class="score-insights">
-                            <div class="insight-item good">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Clear structure and formatting</span>
+                        <div class="score-insights" id="insightsContainer">
+                            <!-- Dynamic insights will be inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Detailed Breakdown Section -->
+                    <div class="analysis-breakdown" id="analysisBreakdown" style="display: none; margin-top: 30px;">
+                        <h4 style="margin-bottom: 20px; color: #1a202c;">Analysis Breakdown</h4>
+                        <div class="breakdown-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div class="breakdown-item">
+                                <div class="breakdown-label" style="color: #718096; font-size: 14px;">Formatting</div>
+                                <div class="breakdown-score" id="formatScore" style="font-size: 24px; font-weight: 600; color: #667eea;">--</div>
                             </div>
-                            <div class="insight-item warning">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <span>Missing 8 industry keywords</span>
+                            <div class="breakdown-item">
+                                <div class="breakdown-label" style="color: #718096; font-size: 14px;">Keywords</div>
+                                <div class="breakdown-score" id="keywordScore" style="font-size: 24px; font-weight: 600; color: #667eea;">--</div>
                             </div>
-                            <div class="insight-item warning">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <span>Skills section needs optimization</span>
+                            <div class="breakdown-item">
+                                <div class="breakdown-label" style="color: #718096; font-size: 14px;">Content</div>
+                                <div class="breakdown-score" id="contentScore" style="font-size: 24px; font-weight: 600; color: #667eea;">--</div>
                             </div>
+                            <div class="breakdown-item">
+                                <div class="breakdown-label" style="color: #718096; font-size: 14px;">Structure</div>
+                                <div class="breakdown-score" id="structureScore" style="font-size: 24px; font-weight: 600; color: #667eea;">--</div>
+                            </div>
+                            <div class="breakdown-item">
+                                <div class="breakdown-label" style="color: #718096; font-size: 14px;">Achievements</div>
+                                <div class="breakdown-score" id="achievementScore" style="font-size: 24px; font-weight: 600; color: #667eea;">--</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Keywords Section -->
+                    <div class="keywords-section" id="keywordsSection" style="display: none; margin-top: 30px;">
+                        <h4 style="margin-bottom: 15px; color: #1a202c;">Detected Skills</h4>
+                        <div id="detectedSkills" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+                            <!-- Skills tags will be inserted here -->
+                        </div>
+                        <h4 style="margin-bottom: 15px; color: #1a202c;">Missing Keywords</h4>
+                        <div id="missingKeywords" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            <!-- Missing keywords will be inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Score Color Legend -->
+                    <div class="score-legend" style="margin-top: 20px; padding: 15px; background: #f7fafc; border-radius: 8px; font-size: 14px; color: #718096;">
+                        <strong style="color: #1a202c;">Score Guide:</strong> 
+                        <span style="color: #48bb78;">80-100 Excellent</span> • 
+                        <span style="color: #ed8936;">60-79 Good</span> • 
+                        <span style="color: #f56565;">0-59 Needs Improvement</span>
                         </div>
                     </div>
 

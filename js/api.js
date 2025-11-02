@@ -4,7 +4,7 @@
 
 // API Configuration
 const API_CONFIG = {
-    BASE_URL: 'https://v-izzy.com/api',
+    BASE_URL: 'https://api.v-izzy.com/api',
     // For local development, uncomment:
     // BASE_URL: 'http://localhost:3000/api',
     TIMEOUT: 30000 // 30 seconds

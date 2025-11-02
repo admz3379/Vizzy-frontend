@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'https://v-izzy.com/api';
+const API_BASE_URL = 'https://api.v-izzy.com/api';
 let authToken = localStorage.getItem('vizzy_auth_token');
 
 // ==============================================

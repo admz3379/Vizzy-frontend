@@ -480,15 +480,21 @@ async function subscribeToPro() {
 
 // Check if user was redirected back after login for checkout
 async function checkForCheckoutRedirect() {
+    // Check URL parameters for subscribe parameter FIRST (before API loads)
+    const urlParams = new URLSearchParams(window.location.search);
+    const subscribePlan = urlParams.get('subscribe');
+    
+    // If subscribe parameter exists, show loading overlay immediately
+    if (subscribePlan) {
+        // Show loading overlay to prevent confusion
+        showCheckoutLoadingOverlay();
+    }
+    
     // Wait for VizzyAPI to load
     if (typeof window.VizzyAPI === 'undefined') {
         setTimeout(checkForCheckoutRedirect, 100);
         return;
     }
-    
-    // Check URL parameters for subscribe parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const subscribePlan = urlParams.get('subscribe');
     
     if (subscribePlan && window.VizzyAPI.AuthManager.isAuthenticated()) {
         console.log(`🎯 User authenticated and ready to subscribe to ${subscribePlan} plan`);
@@ -497,7 +503,7 @@ async function checkForCheckoutRedirect() {
         const newUrl = window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
         
-        // Slight delay to ensure everything is loaded
+        // Minimal delay to ensure everything is loaded (reduced from 500ms to 200ms)
         setTimeout(async () => {
             try {
                 if (subscribePlan === 'basic') {
@@ -507,9 +513,63 @@ async function checkForCheckoutRedirect() {
                 }
             } catch (error) {
                 console.error('Auto-subscribe error:', error);
+                hideCheckoutLoadingOverlay();
                 alert('Error initiating checkout: ' + error.message);
             }
-        }, 500);
+        }, 200);
+    }
+}
+
+// Show checkout loading overlay
+function showCheckoutLoadingOverlay() {
+    let overlay = document.getElementById('checkout-loading-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'checkout-loading-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+        `;
+        overlay.innerHTML = `
+            <div style="text-align: center;">
+                <div style="
+                    width: 60px;
+                    height: 60px;
+                    border: 4px solid #e0e0e0;
+                    border-top: 4px solid #667eea;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                    margin: 0 auto 20px;
+                "></div>
+                <h2 style="color: #333; margin: 0 0 10px 0; font-size: 24px; font-weight: 600;">Redirecting to Checkout</h2>
+                <p style="color: #666; margin: 0; font-size: 16px;">Setting up your subscription payment...</p>
+            </div>
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+        `;
+        document.body.appendChild(overlay);
+    }
+    overlay.style.display = 'flex';
+}
+
+// Hide checkout loading overlay
+function hideCheckoutLoadingOverlay() {
+    const overlay = document.getElementById('checkout-loading-overlay');
+    if (overlay) {
+        overlay.style.display = 'none';
     }
 }
 

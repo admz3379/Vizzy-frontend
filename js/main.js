@@ -1,6 +1,6 @@
 // API Configuration
-const API_BASE_URL = 'https://api.v-izzy.com';
-let authToken = localStorage.getItem('authToken');
+const API_BASE_URL = 'https://v-izzy.com/api';
+let authToken = localStorage.getItem('vizzy_auth_token');
 
 // ==============================================
 // VIZZY - Main JavaScript
@@ -220,21 +220,78 @@ function initScrollEffects() {
 // DEMO INTERACTIONS
 // ==============================================
 
-// Add click handlers for pricing buttons
-document.addEventListener('DOMContentLoaded', function() {
-    const pricingButtons = document.querySelectorAll('.pricing button');
-    
-    pricingButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const planName = this.closest('.pricing-card').querySelector('h3').textContent;
-            showPricingModal(planName);
-        });
-    });
-});
+// ==============================================
+// PAYMENT INTEGRATION
+// ==============================================
 
-function showPricingModal(planName) {
-    // In a real app, this would open a checkout modal or redirect to payment
-    alert(`🚀 Upgrade to ${planName}\n\nIn production, this would open the checkout flow.\nFor this demo, payment integration is not included.`);
+// Subscribe to Basic Plan
+async function subscribeToBasic() {
+    if (typeof window.VizzyAPI === 'undefined') {
+        alert('Payment system is loading. Please try again in a moment.');
+        return;
+    }
+    
+    try {
+        await window.VizzyAPI.PaymentFlow.subscribeToPlan('basic');
+    } catch (error) {
+        console.error('Subscription error:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+// Subscribe to Pro Plan
+async function subscribeToPro() {
+    if (typeof window.VizzyAPI === 'undefined') {
+        alert('Payment system is loading. Please try again in a moment.');
+        return;
+    }
+    
+    try {
+        await window.VizzyAPI.PaymentFlow.subscribeToPlan('pro');
+    } catch (error) {
+        console.error('Subscription error:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+// Check if user is logged in and update UI
+function updateUIForAuthState() {
+    if (typeof window.VizzyAPI === 'undefined') return;
+    
+    const signInButton = document.querySelector('.btn-secondary');
+    if (!signInButton) return;
+    
+    if (window.VizzyAPI.AuthManager.isAuthenticated()) {
+        const user = window.VizzyAPI.UserManager.getUser();
+        signInButton.textContent = user?.email || 'Dashboard';
+        signInButton.onclick = () => window.location.href = '/dashboard.html';
+    } else {
+        signInButton.textContent = 'Sign In';
+        signInButton.onclick = () => window.location.href = '/login.html';
+    }
+}
+
+// Check subscription status and show badge
+async function checkAndDisplaySubscription() {
+    if (typeof window.VizzyAPI === 'undefined') return;
+    if (!window.VizzyAPI.AuthManager.isAuthenticated()) return;
+    
+    try {
+        const subscription = await window.VizzyAPI.PaymentFlow.checkSubscription();
+        if (subscription.plan !== 'free' && subscription.subscription_status === 'active') {
+            // Show subscription badge in navbar
+            const logo = document.querySelector('.logo');
+            if (logo && !document.querySelector('.subscription-badge')) {
+                const badge = document.createElement('span');
+                badge.className = 'subscription-badge';
+                badge.textContent = subscription.plan.toUpperCase();
+                badge.style.cssText = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; margin-left: 8px; font-weight: 600;';
+                logo.appendChild(badge);
+            }
+        }
+    } catch (error) {
+        console.error('Error checking subscription:', error);
+    }
 }
 
 // ==============================================
@@ -284,6 +341,12 @@ document.addEventListener('DOMContentLoaded', function() {
         stat.style.opacity = '0';
         stat.style.animation = `fadeInUp 0.8s ease-out ${0.8 + (index * 0.2)}s forwards`;
     });
+    
+    // Update UI based on auth state
+    setTimeout(() => {
+        updateUIForAuthState();
+        checkAndDisplaySubscription();
+    }, 100);
 });
 
 // ==============================================

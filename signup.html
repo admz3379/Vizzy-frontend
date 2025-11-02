@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Vizzy</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .auth-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 450px;
+            width: 90%;
+            margin: 20px;
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .auth-header .logo {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .auth-header h2 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .auth-header p {
+            color: #666;
+            margin: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn-auth {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-auth:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        
+        .divider span {
+            background: white;
+            padding: 0 10px;
+            position: relative;
+            color: #999;
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .auth-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .success-message {
+            background: #efe;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .password-strength {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+        }
+        
+        .password-strength-text {
+            font-size: 12px;
+            margin-top: 4px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="logo">
+                <i class="fas fa-eye"></i> VIZZY
+            </div>
+            <h2>Create Your Account</h2>
+            <p>Start optimizing your resume today</p>
+        </div>
+        
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+        
+        <form id="signupForm" onsubmit="handleSignup(event)">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required placeholder="John Doe">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required placeholder="you@example.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="At least 8 characters" oninput="checkPasswordStrength()">
+                <div class="password-strength">
+                    <div class="password-strength-bar" id="strengthBar"></div>
+                </div>
+                <div class="password-strength-text" id="strengthText"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Re-enter password">
+            </div>
+            
+            <button type="submit" class="btn-auth" id="signupButton">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+        </form>
+        
+        <div class="divider">
+            <span>or</span>
+        </div>
+        
+        <div class="auth-footer">
+            <p>Already have an account? <a href="login.html">Sign In</a></p>
+            <p style="margin-top: 10px;"><a href="/">← Back to Home</a></p>
+        </div>
+    </div>
+    
+    <script src="js/api.js"></script>
+    <script>
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+            
+            const colors = ['#e74c3c', '#e67e22', '#f39c12', '#2ecc71'];
+            const widths = ['25%', '50%', '75%', '100%'];
+            const texts = ['Weak', 'Fair', 'Good', 'Strong'];
+            
+            if (password.length > 0) {
+                strengthBar.style.width = widths[strength - 1] || '0%';
+                strengthBar.style.background = colors[strength - 1] || '#e74c3c';
+                strengthText.textContent = texts[strength - 1] || '';
+                strengthText.style.color = colors[strength - 1] || '#e74c3c';
+            } else {
+                strengthBar.style.width = '0%';
+                strengthText.textContent = '';
+            }
+        }
+        
+        async function handleSignup(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const button = document.getElementById('signupButton');
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            
+            // Hide messages
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'Passwords do not match';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Validate password strength
+            if (password.length < 8) {
+                errorDiv.textContent = 'Password must be at least 8 characters';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Disable button
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+            
+            try {
+                await window.VizzyAPI.Auth.register(email, password, name);
+                
+                // Show success
+                successDiv.textContent = 'Account created successfully! Redirecting...';
+                successDiv.style.display = 'block';
+                
+                // Check if there's an intended plan
+                const intendedPlan = sessionStorage.getItem('intended_plan');
+                
+                setTimeout(() => {
+                    if (intendedPlan) {
+                        sessionStorage.removeItem('intended_plan');
+                        window.location.href = `/?subscribe=${intendedPlan}`;
+                    } else {
+                        window.location.href = '/dashboard.html';
+                    }
+                }, 1000);
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+            }
+        }
+        
+        // Check if already logged in
+        if (window.VizzyAPI && window.VizzyAPI.AuthManager.isAuthenticated()) {
+            window.location.href = '/dashboard.html';
+        }
+    </script>
+</body>
+</html>

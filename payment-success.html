@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - Vizzy</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .success-container {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        .success-icon i {
+            font-size: 50px;
+            color: white;
+        }
+        
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+        
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .subscription-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 30px 0;
+        }
+        
+        .subscription-info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .features-list {
+            text-align: left;
+            margin: 30px 0;
+        }
+        
+        .features-list h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .features-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .features-list li {
+            padding: 10px 0;
+            color: #666;
+        }
+        
+        .features-list li i {
+            color: #667eea;
+            margin-right: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .loading-state {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e0e0e0;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div id="loadingState" class="loading-state">
+            <div class="spinner"></div>
+            <h2>Verifying your payment...</h2>
+            <p>Please wait a moment</p>
+        </div>
+        
+        <div id="successContent" style="display: none;">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            
+            <h1>Payment Successful!</h1>
+            <p style="color: #666; font-size: 18px; margin-bottom: 20px;">
+                Thank you for subscribing to Vizzy
+            </p>
+            
+            <div class="subscription-info">
+                <h3>Subscription Details</h3>
+                <div class="info-row">
+                    <span class="info-label">Plan:</span>
+                    <span class="info-value" id="planName">Basic</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Status:</span>
+                    <span class="info-value" style="color: #2ecc71;">Active</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Next Billing:</span>
+                    <span class="info-value" id="nextBilling">-</span>
+                </div>
+            </div>
+            
+            <div class="features-list">
+                <h3>What's Included</h3>
+                <ul id="featuresList">
+                    <!-- Features will be populated by JavaScript -->
+                </ul>
+            </div>
+            
+            <div>
+                <a href="/dashboard.html" class="btn-primary">
+                    <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                </a>
+                <a href="/" class="btn-secondary">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/api.js"></script>
+    <script>
+        const planFeatures = {
+            basic: [
+                '20 ATS scans per month',
+                '5 AI optimizations per month',
+                '5 resume storage slots',
+                'Full ATS scoring and analysis',
+                'AI-powered content optimization'
+            ],
+            pro: [
+                'Unlimited ATS scans',
+                'Unlimited AI optimizations',
+                'Unlimited resume storage',
+                'Advanced ATS insights',
+                'Priority support'
+            ]
+        };
+        
+        async function verifyPayment() {
+            const loadingState = document.getElementById('loadingState');
+            const successContent = document.getElementById('successContent');
+            
+            try {
+                const result = await window.VizzyAPI.PaymentFlow.verifyPayment();
+                
+                if (result.success) {
+                    // Update subscription details
+                    const plan = result.subscription.plan;
+                    const planNameEl = document.getElementById('planName');
+                    const nextBillingEl = document.getElementById('nextBilling');
+                    const featuresListEl = document.getElementById('featuresList');
+                    
+                    planNameEl.textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+                    
+                    if (result.subscription.subscription_ends_at) {
+                        const endDate = new Date(result.subscription.subscription_ends_at);
+                        nextBillingEl.textContent = endDate.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+                    }
+                    
+                    // Populate features
+                    const features = planFeatures[plan] || [];
+                    featuresListEl.innerHTML = features.map(feature => 
+                        `<li><i class="fas fa-check-circle"></i> ${feature}</li>`
+                    ).join('');
+                    
+                    // Show success content
+                    loadingState.style.display = 'none';
+                    successContent.style.display = 'block';
+                } else {
+                    throw new Error(result.error || 'Payment verification failed');
+                }
+            } catch (error) {
+                console.error('Verification error:', error);
+                loadingState.innerHTML = `
+                    <div style="color: #e74c3c;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 50px; margin-bottom: 20px;"></i>
+                        <h2>Verification Error</h2>
+                        <p>${error.message}</p>
+                        <p style="margin-top: 20px;">
+                            <a href="/dashboard.html" class="btn-primary">Go to Dashboard</a>
+                            <a href="/" class="btn-secondary">Back to Home</a>
+                        </p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Start verification when page loads
+        window.addEventListener('load', () => {
+            setTimeout(verifyPayment, 1000);
+        });
+    </script>
+</body>
+</html>

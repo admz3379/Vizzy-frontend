@@ -303,62 +303,60 @@
             <div class="pricing-grid">
                 <div class="pricing-card">
                     <div class="pricing-header">
-                        <h3>Vizzy Lite</h3>
+                        <h3>Free</h3>
                         <div class="price">
                             <span class="price-amount">$0</span>
+                            <span class="price-period">/month</span>
                         </div>
                         <p>Perfect for a quick scan</p>
                     </div>
                     <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> 1 free ATS scan</li>
-                        <li><i class="fas fa-check"></i> Basic keyword report</li>
-                        <li><i class="fas fa-check"></i> Format check</li>
+                        <li><i class="fas fa-check"></i> 3 ATS scans per month</li>
+                        <li><i class="fas fa-check"></i> 1 resume storage</li>
+                        <li><i class="fas fa-check"></i> Basic ATS scoring</li>
                         <li class="disabled"><i class="fas fa-times"></i> AI optimization</li>
-                        <li class="disabled"><i class="fas fa-times"></i> Job matching</li>
-                        <li class="disabled"><i class="fas fa-times"></i> Interview prep</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Priority support</li>
                     </ul>
-                    <button class="btn-outline btn-block">Get Started Free</button>
+                    <button class="btn-outline btn-block" onclick="scrollToScanner()">Get Started Free</button>
                 </div>
 
                 <div class="pricing-card featured">
                     <div class="badge">Most Popular</div>
                     <div class="pricing-header">
-                        <h3>Vizzy Pro</h3>
+                        <h3>Basic</h3>
                         <div class="price">
-                            <span class="price-amount">$15</span>
-                            <span class="price-period">one-time</span>
+                            <span class="price-amount">$9.99</span>
+                            <span class="price-period">/month</span>
                         </div>
                         <p>Everything you need to get noticed</p>
                     </div>
                     <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Unlimited ATS scans</li>
-                        <li><i class="fas fa-check"></i> Full keyword analysis</li>
-                        <li><i class="fas fa-check"></i> AI content optimization</li>
-                        <li><i class="fas fa-check"></i> Job match feed (100+)</li>
-                        <li><i class="fas fa-check"></i> Optimized PDF download</li>
-                        <li><i class="fas fa-check"></i> 30-day access</li>
+                        <li><i class="fas fa-check"></i> 20 ATS scans per month</li>
+                        <li><i class="fas fa-check"></i> 5 AI optimizations per month</li>
+                        <li><i class="fas fa-check"></i> 5 resume storage slots</li>
+                        <li><i class="fas fa-check"></i> Full ATS scoring</li>
+                        <li><i class="fas fa-check"></i> AI-powered optimization</li>
                     </ul>
-                    <button class="btn-primary btn-block">Get Vizzy Pro</button>
+                    <button class="btn-primary btn-block" onclick="subscribeToBasic()">Subscribe to Basic</button>
                 </div>
 
                 <div class="pricing-card">
                     <div class="pricing-header">
-                        <h3>Vizzy AI</h3>
+                        <h3>Pro</h3>
                         <div class="price">
-                            <span class="price-amount">$49</span>
-                            <span class="price-period">one-time</span>
+                            <span class="price-amount">$24.99</span>
+                            <span class="price-period">/month</span>
                         </div>
                         <p>Full career visibility suite</p>
                     </div>
                     <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Everything in Pro</li>
-                        <li><i class="fas fa-check"></i> Smart resume rewrite</li>
-                        <li><i class="fas fa-check"></i> LinkedIn optimization</li>
-                        <li><i class="fas fa-check"></i> Job match feed (1000+)</li>
-                        <li><i class="fas fa-check"></i> Interview coach (VizzyPrep)</li>
-                        <li><i class="fas fa-check"></i> 90-day access</li>
+                        <li><i class="fas fa-check"></i> <strong>Unlimited</strong> ATS scans</li>
+                        <li><i class="fas fa-check"></i> <strong>Unlimited</strong> AI optimizations</li>
+                        <li><i class="fas fa-check"></i> <strong>Unlimited</strong> resume storage</li>
+                        <li><i class="fas fa-check"></i> Advanced ATS insights</li>
+                        <li><i class="fas fa-check"></i> Priority support</li>
                     </ul>
-                    <button class="btn-outline btn-block">Get Vizzy AI</button>
+                    <button class="btn-primary btn-block" onclick="subscribeToPro()">Subscribe to Pro</button>
                 </div>
             </div>
         </div>
@@ -422,6 +420,41 @@
         </div>
     </footer>
 
+    <!-- Load API first, then main.js -->
+    <script src="js/api.js"></script>
     <script src="js/main.js"></script>
+    
+    <!-- Loading Overlay Styles -->
+    <style>
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </body>
 </html>

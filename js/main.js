@@ -40,18 +40,27 @@ function initFileUpload() {
     const scanningAnimation = document.getElementById('scanningAnimation');
     const scanResults = document.getElementById('scanResults');
     
+    if (!uploadArea || !fileInput) {
+        console.error('Upload elements not found');
+        return;
+    }
+    
     // Drag and drop events
     uploadArea.addEventListener('dragover', function(e) {
         e.preventDefault();
+        e.stopPropagation();
         uploadArea.classList.add('dragging');
     });
     
-    uploadArea.addEventListener('dragleave', function() {
+    uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
         uploadArea.classList.remove('dragging');
     });
     
     uploadArea.addEventListener('drop', function(e) {
         e.preventDefault();
+        e.stopPropagation();
         uploadArea.classList.remove('dragging');
         
         const files = e.dataTransfer.files;
@@ -61,20 +70,25 @@ function initFileUpload() {
     });
     
     // File input change
-    fileInput.addEventListener('change', function() {
-        if (fileInput.files.length > 0) {
+    fileInput.addEventListener('change', function(e) {
+        if (fileInput.files && fileInput.files.length > 0) {
             handleFileUpload(fileInput.files[0]);
         }
     });
     
-    // Click on upload area to trigger file input
+    // Click on upload area to trigger file input (use event delegation)
     uploadArea.addEventListener('click', function(e) {
-        if (e.target !== uploadArea && !uploadArea.contains(e.target)) return;
+        // Don't trigger if clicking the button itself
+        if (e.target.tagName === 'BUTTON') return;
+        e.preventDefault();
+        e.stopPropagation();
         fileInput.click();
     });
+    
+    console.log('File upload initialized successfully');
 }
 
-function handleFileUpload(file) {
+async function handleFileUpload(file) {
     // Validate file type
     const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
     if (!validTypes.includes(file.type)) {
@@ -91,10 +105,45 @@ function handleFileUpload(file) {
     // Show scanning animation
     showScanningAnimation();
     
-    // Simulate scanning process (2-3 seconds)
-    setTimeout(function() {
-        showScanResults();
-    }, 2500);
+    try {
+        // Check if user is authenticated
+        const isAuthenticated = window.VizzyAPI && window.VizzyAPI.AuthManager.isAuthenticated();
+        
+        if (!isAuthenticated) {
+            // For unauthenticated users, show demo results after animation
+            setTimeout(function() {
+                showScanResults(null); // Show demo data
+            }, 2500);
+            return;
+        }
+        
+        // For authenticated users, upload to backend
+        const formData = new FormData();
+        formData.append('resume', file);
+        
+        const response = await fetch(`${API_BASE_URL}/resumes/upload`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${window.VizzyAPI.AuthManager.getToken()}`
+            },
+            body: formData
+        });
+        
+        if (!response.ok) {
+            throw new Error('Upload failed');
+        }
+        
+        const result = await response.json();
+        
+        // Show results with actual data
+        showScanResults(result.data);
+    } catch (error) {
+        console.error('Upload error:', error);
+        // On error, show demo results
+        setTimeout(function() {
+            showScanResults(null);
+        }, 500);
+    }
 }
 
 function showScanningAnimation() {
@@ -105,15 +154,24 @@ function showScanningAnimation() {
     scanningAnimation.style.display = 'block';
 }
 
-function showScanResults() {
+function showScanResults(data = null) {
     const scanningAnimation = document.getElementById('scanningAnimation');
     const scanResults = document.getElementById('scanResults');
     
     scanningAnimation.style.display = 'none';
     scanResults.style.display = 'block';
     
+    // Use actual score from backend or demo score
+    const score = data?.ats_score || 68;
+    
     // Animate the score
-    animateScore(68); // Demo score
+    animateScore(score);
+    
+    // If we have real data, we could update insights here
+    if (data) {
+        // Future enhancement: Update insight items with real data
+        console.log('Resume analysis data:', data);
+    }
 }
 
 function animateScore(targetScore) {

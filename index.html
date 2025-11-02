@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vizzy - Be Seen. Get Hired.</title>
+    <meta name="description" content="AI-powered career visibility tool. Build, scan, and optimize your resume to pass ATS filters and get seen by recruiters.">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-eye"></i>
+                    <span>VIZZY</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#pricing">Pricing</a>
+                    <button class="btn-secondary">Sign In</button>
+                </div>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-sparkles"></i>
+                    <span>AI-Powered Career Visibility</span>
+                </div>
+                <h1 class="hero-title">
+                    Be Seen.<br>
+                    <span class="gradient-text">Get Hired.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Your resume deserves to be seen — not filtered. Vizzy uses AI to scan, optimize, and match your resume to real jobs in minutes.
+                </p>
+                <div class="hero-cta">
+                    <button class="btn-primary" onclick="scrollToScanner()">
+                        <i class="fas fa-upload"></i>
+                        Scan Your Resume Free
+                    </button>
+                    <button class="btn-outline">
+                        <i class="fas fa-play"></i>
+                        See How It Works
+                    </button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number">50K+</div>
+                        <div class="stat-label">Resumes Scanned</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">87%</div>
+                        <div class="stat-label">ATS Pass Rate</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">3x</div>
+                        <div class="stat-label">More Interviews</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Animated Background -->
+        <div class="hero-background">
+            <div class="floating-icon" style="top: 20%; left: 10%;"><i class="fas fa-file-alt"></i></div>
+            <div class="floating-icon" style="top: 60%; left: 15%;"><i class="fas fa-briefcase"></i></div>
+            <div class="floating-icon" style="top: 30%; right: 20%;"><i class="fas fa-chart-line"></i></div>
+            <div class="floating-icon" style="top: 70%; right: 10%;"><i class="fas fa-rocket"></i></div>
+        </div>
+    </section>
+
+    <!-- Scanner Section -->
+    <section class="scanner-section" id="scanner">
+        <div class="container">
+            <div class="scanner-card">
+                <div class="scanner-header">
+                    <h2>Get Your Free ATS Score</h2>
+                    <p>Upload your resume and see how it performs against Applicant Tracking Systems</p>
+                </div>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Drag & drop your resume here</h3>
+                    <p>or click to browse</p>
+                    <p class="file-types">PDF, DOCX (Max 5MB)</p>
+                    <input type="file" id="fileInput" accept=".pdf,.doc,.docx" hidden>
+                    <button class="btn-primary" onclick="document.getElementById('fileInput').click()">
+                        Choose File
+                    </button>
+                </div>
+
+                <div class="scanning-animation" id="scanningAnimation" style="display: none;">
+                    <div class="scan-loader">
+                        <div class="scan-line"></div>
+                    </div>
+                    <h3>Analyzing your resume...</h3>
+                    <p>This will only take a moment</p>
+                </div>
+
+                <div class="scan-results" id="scanResults" style="display: none;">
+                    <div class="results-header">
+                        <h3>Your Vizzy Score</h3>
+                        <button class="btn-link" onclick="resetScanner()">
+                            <i class="fas fa-redo"></i> Scan Another
+                        </button>
+                    </div>
+                    
+                    <div class="score-display">
+                        <div class="score-circle">
+                            <svg viewBox="0 0 200 200">
+                                <circle cx="100" cy="100" r="90" class="score-bg"></circle>
+                                <circle cx="100" cy="100" r="90" class="score-fill" id="scoreCircle"></circle>
+                            </svg>
+                            <div class="score-number" id="scoreNumber">0</div>
+                            <div class="score-label">/ 100</div>
+                        </div>
+                        <div class="score-insights">
+                            <div class="insight-item good">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Clear structure and formatting</span>
+                            </div>
+                            <div class="insight-item warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Missing 8 industry keywords</span>
+                            </div>
+                            <div class="insight-item warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Skills section needs optimization</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="unlock-section">
+                        <h4>Unlock Your Full Report</h4>
+                        <ul class="unlock-features">
+                            <li><i class="fas fa-check"></i> Detailed keyword analysis</li>
+                            <li><i class="fas fa-check"></i> AI-powered rewrite suggestions</li>
+                            <li><i class="fas fa-check"></i> Match to 1000+ live jobs</li>
+                            <li><i class="fas fa-check"></i> Optimized PDF download</li>
+                        </ul>
+                        <button class="btn-primary btn-large">
+                            <i class="fas fa-magic"></i>
+                            Get VizzyPro - $15
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Everything You Need to Stand Out</h2>
+                <p>AI-powered tools that make your resume rise above the noise</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon scan">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>VizzyScan</h3>
+                    <p>Instant ATS compatibility check with detailed keyword analysis and formatting recommendations.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> ATS compatibility score</li>
+                        <li><i class="fas fa-check"></i> Keyword gap analysis</li>
+                        <li><i class="fas fa-check"></i> Format optimization</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon fix">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3>VizzyFix</h3>
+                    <p>AI-powered optimization that rewrites and enhances your resume for maximum impact.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Smart content rewrite</li>
+                        <li><i class="fas fa-check"></i> Achievement quantification</li>
+                        <li><i class="fas fa-check"></i> Industry-specific keywords</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon match">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3>VizzyMatch</h3>
+                    <p>Real-time job matching engine that finds opportunities aligned with your skills.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> 1000+ live job matches</li>
+                        <li><i class="fas fa-check"></i> Skill gap analysis</li>
+                        <li><i class="fas fa-check"></i> Match score ranking</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon create">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>VizzyCreate</h3>
+                    <p>Build a professional resume from scratch with AI-guided templates and suggestions.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Modern templates</li>
+                        <li><i class="fas fa-check"></i> AI content suggestions</li>
+                        <li><i class="fas fa-check"></i> One-click formatting</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon prep">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>VizzyPrep</h3>
+                    <p>Interview preparation coach with personalized questions based on your resume.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Custom interview questions</li>
+                        <li><i class="fas fa-check"></i> Answer frameworks</li>
+                        <li><i class="fas fa-check"></i> Practice mode</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon score">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>VizzyScore</h3>
+                    <p>Track your career visibility with analytics and insights on your application performance.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Visibility dashboard</li>
+                        <li><i class="fas fa-check"></i> Application tracking</li>
+                        <li><i class="fas fa-check"></i> Performance insights</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>Simple. Fast. Effective.</h2>
+                <p>Get from invisible to irresistible in three steps</p>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-icon"><i class="fas fa-upload"></i></div>
+                    <h3>Upload</h3>
+                    <p>Drop your resume and get instant ATS analysis</p>
+                </div>
+                <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-icon"><i class="fas fa-magic"></i></div>
+                    <h3>Optimize</h3>
+                    <p>Let AI fix keywords, format, and content</p>
+                </div>
+                <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-icon"><i class="fas fa-rocket"></i></div>
+                    <h3>Match</h3>
+                    <p>Find jobs that actually fit your skills</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2>Choose Your Visibility Level</h2>
+                <p>Start free, upgrade when you're ready to stand out</p>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Vizzy Lite</h3>
+                        <div class="price">
+                            <span class="price-amount">$0</span>
+                        </div>
+                        <p>Perfect for a quick scan</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 1 free ATS scan</li>
+                        <li><i class="fas fa-check"></i> Basic keyword report</li>
+                        <li><i class="fas fa-check"></i> Format check</li>
+                        <li class="disabled"><i class="fas fa-times"></i> AI optimization</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Job matching</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Interview prep</li>
+                    </ul>
+                    <button class="btn-outline btn-block">Get Started Free</button>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3>Vizzy Pro</h3>
+                        <div class="price">
+                            <span class="price-amount">$15</span>
+                            <span class="price-period">one-time</span>
+                        </div>
+                        <p>Everything you need to get noticed</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Unlimited ATS scans</li>
+                        <li><i class="fas fa-check"></i> Full keyword analysis</li>
+                        <li><i class="fas fa-check"></i> AI content optimization</li>
+                        <li><i class="fas fa-check"></i> Job match feed (100+)</li>
+                        <li><i class="fas fa-check"></i> Optimized PDF download</li>
+                        <li><i class="fas fa-check"></i> 30-day access</li>
+                    </ul>
+                    <button class="btn-primary btn-block">Get Vizzy Pro</button>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Vizzy AI</h3>
+                        <div class="price">
+                            <span class="price-amount">$49</span>
+                            <span class="price-period">one-time</span>
+                        </div>
+                        <p>Full career visibility suite</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Everything in Pro</li>
+                        <li><i class="fas fa-check"></i> Smart resume rewrite</li>
+                        <li><i class="fas fa-check"></i> LinkedIn optimization</li>
+                        <li><i class="fas fa-check"></i> Job match feed (1000+)</li>
+                        <li><i class="fas fa-check"></i> Interview coach (VizzyPrep)</li>
+                        <li><i class="fas fa-check"></i> 90-day access</li>
+                    </ul>
+                    <button class="btn-outline btn-block">Get Vizzy AI</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Be Seen?</h2>
+                <p>Join 50,000+ job seekers who got noticed with Vizzy</p>
+                <button class="btn-primary btn-large" onclick="scrollToScanner()">
+                    <i class="fas fa-upload"></i>
+                    Scan Your Resume Now
+                </button>
+                <p class="cta-note">Free scan • No credit card required • Instant results</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <i class="fas fa-eye"></i>
+                        <span>VIZZY</span>
+                    </div>
+                    <p>Be seen. Get hired.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Product</h4>
+                        <a href="#features">Features</a>
+                        <a href="#pricing">Pricing</a>
+                        <a href="#how-it-works">How It Works</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <a href="#">Blog</a>
+                        <a href="#">Resume Tips</a>
+                        <a href="#">Career Guides</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Company</h4>
+                        <a href="#">About</a>
+                        <a href="#">Contact</a>
+                        <a href="#">Privacy</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Vizzy. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

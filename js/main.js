@@ -480,43 +480,60 @@ async function subscribeToPro() {
 
 // Check if user was redirected back after login for checkout
 async function checkForCheckoutRedirect() {
-    // Check URL parameters for subscribe parameter FIRST (before API loads)
+    // Check URL parameters for subscribe parameter
     const urlParams = new URLSearchParams(window.location.search);
     const subscribePlan = urlParams.get('subscribe');
     
-    // If subscribe parameter exists, show loading overlay immediately
-    if (subscribePlan) {
-        // Show loading overlay to prevent confusion
-        showCheckoutLoadingOverlay();
-    }
+    // Only proceed if subscribe parameter exists
+    if (!subscribePlan) return;
     
-    // Wait for VizzyAPI to load
-    if (typeof window.VizzyAPI === 'undefined') {
-        setTimeout(checkForCheckoutRedirect, 100);
+    // Wait for VizzyAPI to load (with timeout)
+    let attempts = 0;
+    const maxAttempts = 50; // 5 seconds max
+    
+    const waitForAPI = () => {
+        if (typeof window.VizzyAPI !== 'undefined') {
+            handleSubscribeFlow(subscribePlan);
+        } else if (attempts < maxAttempts) {
+            attempts++;
+            setTimeout(waitForAPI, 100);
+        } else {
+            console.error('API failed to load');
+            alert('Payment system loading failed. Please try again.');
+        }
+    };
+    
+    waitForAPI();
+}
+
+// Handle subscribe flow (separated for clarity)
+async function handleSubscribeFlow(subscribePlan) {
+    // Check authentication
+    if (!window.VizzyAPI.AuthManager.isAuthenticated()) {
+        console.log('User not authenticated, skipping subscribe flow');
         return;
     }
     
-    if (subscribePlan && window.VizzyAPI.AuthManager.isAuthenticated()) {
-        console.log(`🎯 User authenticated and ready to subscribe to ${subscribePlan} plan`);
-        
-        // Clean up URL (remove subscribe parameter)
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, document.title, newUrl);
-        
-        // Minimal delay to ensure everything is loaded (reduced from 500ms to 200ms)
-        setTimeout(async () => {
-            try {
-                if (subscribePlan === 'basic') {
-                    await subscribeToBasic();
-                } else if (subscribePlan === 'pro') {
-                    await subscribeToPro();
-                }
-            } catch (error) {
-                console.error('Auto-subscribe error:', error);
-                hideCheckoutLoadingOverlay();
-                alert('Error initiating checkout: ' + error.message);
-            }
-        }, 200);
+    console.log(`🎯 User authenticated, initiating ${subscribePlan} subscription...`);
+    
+    // Show loading overlay ONLY when actually starting checkout
+    showCheckoutLoadingOverlay();
+    
+    // Clean up URL (remove subscribe parameter)
+    const newUrl = window.location.pathname;
+    window.history.replaceState({}, document.title, newUrl);
+    
+    // Immediately start checkout (no artificial delay)
+    try {
+        if (subscribePlan === 'basic') {
+            await subscribeToBasic();
+        } else if (subscribePlan === 'pro') {
+            await subscribeToPro();
+        }
+    } catch (error) {
+        console.error('Auto-subscribe error:', error);
+        hideCheckoutLoadingOverlay();
+        alert('Error initiating checkout: ' + error.message);
     }
 }
 

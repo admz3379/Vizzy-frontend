@@ -347,13 +347,16 @@ const PaymentFlow = {
                 return;
             }
 
-            // Show loading state
-            showLoading('Creating checkout session...');
+            // Show loading state immediately for better UX
+            showLoading('Processing payment...');
 
-            // Create checkout session
+            // Create checkout session (fast API call ~100ms)
             const checkoutData = await PaymentAPI.createCheckout(planId);
 
-            // Redirect to Stripe checkout
+            // Update loading message
+            document.getElementById('loading-message').textContent = 'Redirecting to secure checkout...';
+
+            // Redirect to Stripe checkout immediately
             window.location.href = checkoutData.checkoutUrl;
         } catch (error) {
             hideLoading();

@@ -448,34 +448,58 @@ function initScrollEffects() {
 // PAYMENT INTEGRATION
 // ==============================================
 
+// Stripe Payment Links
+const STRIPE_PAYMENT_LINKS = {
+    basic: 'https://buy.stripe.com/fZuaEXfJv1RZaDZ3vu57W00',
+    pro: 'https://buy.stripe.com/5kQ14nfJv0NVeUfea857W01'
+};
+
 // Subscribe to Basic Plan
 async function subscribeToBasic() {
-    if (typeof window.VizzyAPI === 'undefined') {
-        alert('Payment system is loading. Please try again in a moment.');
+    console.log('📝 subscribeToBasic() called');
+    
+    // Check if user is authenticated
+    if (!window.VizzyAPI || !window.VizzyAPI.AuthManager.isAuthenticated()) {
+        console.log('❌ User not authenticated, redirecting to login');
+        sessionStorage.setItem('intended_plan', 'basic');
+        window.location.href = '/login.html';
         return;
     }
     
-    try {
-        await window.VizzyAPI.PaymentFlow.subscribeToPlan('basic');
-    } catch (error) {
-        console.error('Subscription error:', error);
-        alert('Error: ' + error.message);
-    }
+    console.log('✅ User authenticated, redirecting to Stripe payment link');
+    console.log('🔗 Payment link:', STRIPE_PAYMENT_LINKS.basic);
+    
+    // Show loading overlay
+    showCheckoutLoadingOverlay();
+    
+    // Small delay for visual feedback, then redirect
+    setTimeout(() => {
+        window.location.href = STRIPE_PAYMENT_LINKS.basic;
+    }, 500);
 }
 
 // Subscribe to Pro Plan
 async function subscribeToPro() {
-    if (typeof window.VizzyAPI === 'undefined') {
-        alert('Payment system is loading. Please try again in a moment.');
+    console.log('📝 subscribeToPro() called');
+    
+    // Check if user is authenticated
+    if (!window.VizzyAPI || !window.VizzyAPI.AuthManager.isAuthenticated()) {
+        console.log('❌ User not authenticated, redirecting to login');
+        sessionStorage.setItem('intended_plan', 'pro');
+        window.location.href = '/login.html';
         return;
     }
     
-    try {
-        await window.VizzyAPI.PaymentFlow.subscribeToPlan('pro');
-    } catch (error) {
-        console.error('Subscription error:', error);
-        alert('Error: ' + error.message);
-    }
+    console.log('✅ User authenticated, redirecting to Stripe payment link');
+    console.log('🔗 Payment link:', STRIPE_PAYMENT_LINKS.pro);
+    
+    // Show loading overlay
+    showCheckoutLoadingOverlay();
+    
+    // Small delay for visual feedback, then redirect
+    setTimeout(() => {
+        window.location.href = STRIPE_PAYMENT_LINKS.pro;
+    }, 500);
 }
 
 // Check if user was redirected back after login for checkout
@@ -511,30 +535,32 @@ async function handleSubscribeFlow(subscribePlan) {
     // Check authentication
     if (!window.VizzyAPI.AuthManager.isAuthenticated()) {
         console.log('User not authenticated, skipping subscribe flow');
+        // Clean up URL
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
         return;
     }
     
-    console.log(`🎯 User authenticated, initiating ${subscribePlan} subscription...`);
-    
-    // Show loading overlay ONLY when actually starting checkout
-    showCheckoutLoadingOverlay();
+    console.log(`🎯 User authenticated, redirecting to ${subscribePlan} payment link...`);
     
     // Clean up URL (remove subscribe parameter)
     const newUrl = window.location.pathname;
     window.history.replaceState({}, document.title, newUrl);
     
-    // Immediately start checkout (no artificial delay)
-    try {
-        if (subscribePlan === 'basic') {
-            await subscribeToBasic();
-        } else if (subscribePlan === 'pro') {
-            await subscribeToPro();
+    // Show loading overlay
+    showCheckoutLoadingOverlay();
+    
+    // Redirect to appropriate payment link
+    setTimeout(() => {
+        if (STRIPE_PAYMENT_LINKS[subscribePlan]) {
+            console.log('🔗 Redirecting to:', STRIPE_PAYMENT_LINKS[subscribePlan]);
+            window.location.href = STRIPE_PAYMENT_LINKS[subscribePlan];
+        } else {
+            console.error('❌ Unknown plan:', subscribePlan);
+            hideCheckoutLoadingOverlay();
+            alert('Invalid subscription plan');
         }
-    } catch (error) {
-        console.error('Auto-subscribe error:', error);
-        hideCheckoutLoadingOverlay();
-        alert('Error initiating checkout: ' + error.message);
-    }
+    }, 500);
 }
 
 // Show checkout loading overlay

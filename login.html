@@ -222,25 +222,30 @@
             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
             
             try {
-                await window.VizzyAPI.Auth.login(email, password);
+                console.log('🔐 Starting login process...');
+                const response = await window.VizzyAPI.Auth.login(email, password);
+                console.log('✅ Login API response:', response);
+                
+                // Verify token was stored
+                const token = window.VizzyAPI.AuthManager.getToken();
+                console.log('🎟️ Token stored:', token ? 'YES' : 'NO');
+                
+                if (!token) {
+                    throw new Error('Authentication token not received. Please try again.');
+                }
                 
                 // Show success
-                successDiv.textContent = 'Login successful! Redirecting...';
+                successDiv.textContent = 'Login successful! Redirecting to dashboard...';
                 successDiv.style.display = 'block';
                 
-                // Check if there's an intended plan
-                const intendedPlan = sessionStorage.getItem('intended_plan');
-                
+                // Always redirect to dashboard after successful login
                 setTimeout(() => {
-                    if (intendedPlan) {
-                        sessionStorage.removeItem('intended_plan');
-                        window.location.href = `/?subscribe=${intendedPlan}`;
-                    } else {
-                        window.location.href = '/dashboard.html';
-                    }
-                }, 1000);
+                    console.log('🚀 Redirecting to dashboard...');
+                    window.location.href = '/dashboard.html';
+                }, 1500);
             } catch (error) {
-                errorDiv.textContent = error.message;
+                console.error('❌ Login error:', error);
+                errorDiv.textContent = error.message || 'Login failed. Please check your credentials.';
                 errorDiv.style.display = 'block';
                 button.disabled = false;
                 button.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';

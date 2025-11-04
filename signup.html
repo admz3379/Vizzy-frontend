@@ -298,25 +298,30 @@
             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
             
             try {
-                await window.VizzyAPI.Auth.register(email, password, name);
+                console.log('🔐 Starting signup process...');
+                const response = await window.VizzyAPI.Auth.register(email, password, name);
+                console.log('✅ Signup API response:', response);
+                
+                // Verify token was stored
+                const token = window.VizzyAPI.AuthManager.getToken();
+                console.log('🎟️ Token stored:', token ? 'YES' : 'NO');
+                
+                if (!token) {
+                    throw new Error('Authentication token not received. Please try again.');
+                }
                 
                 // Show success
-                successDiv.textContent = 'Account created successfully! Redirecting...';
+                successDiv.textContent = 'Account created successfully! Redirecting to dashboard...';
                 successDiv.style.display = 'block';
                 
-                // Check if there's an intended plan
-                const intendedPlan = sessionStorage.getItem('intended_plan');
-                
+                // Always redirect to dashboard after successful signup
                 setTimeout(() => {
-                    if (intendedPlan) {
-                        sessionStorage.removeItem('intended_plan');
-                        window.location.href = `/?subscribe=${intendedPlan}`;
-                    } else {
-                        window.location.href = '/dashboard.html';
-                    }
-                }, 1000);
+                    console.log('🚀 Redirecting to dashboard...');
+                    window.location.href = '/dashboard.html';
+                }, 1500);
             } catch (error) {
-                errorDiv.textContent = error.message;
+                console.error('❌ Signup error:', error);
+                errorDiv.textContent = error.message || 'Signup failed. Please try again.';
                 errorDiv.style.display = 'block';
                 button.disabled = false;
                 button.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';

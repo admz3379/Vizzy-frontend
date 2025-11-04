@@ -109,8 +109,8 @@ const AuthAPI = {
         console.log('🔍 Backend Response Structure:', {
             response: response,
             hasData: !!response.data,
+            hasAccessToken: !!(response.data && response.data.accessToken),
             hasToken: !!response.token,
-            hasDataToken: !!(response.data && response.data.token),
             responseKeys: Object.keys(response)
         });
         
@@ -118,18 +118,30 @@ const AuthAPI = {
         let token = null;
         let user = null;
         
-        if (response.data && response.data.token) {
+        if (response.data && response.data.accessToken) {
+            // Format: { data: { accessToken: "...", user: {...} } } - BACKEND STANDARD
+            token = response.data.accessToken;
+            user = response.data.user;
+            console.log('✅ Token found in response.data.accessToken');
+        } else if (response.data && response.data.token) {
             // Format: { data: { token: "...", user: {...} } }
             token = response.data.token;
             user = response.data.user;
+            console.log('✅ Token found in response.data.token');
+        } else if (response.accessToken) {
+            // Format: { accessToken: "...", user: {...} }
+            token = response.accessToken;
+            user = response.user;
+            console.log('✅ Token found in response.accessToken');
         } else if (response.token) {
             // Format: { token: "...", user: {...} }
             token = response.token;
             user = response.user;
+            console.log('✅ Token found in response.token');
         }
         
         if (token) {
-            console.log('✅ Token found, storing...');
+            console.log('✅ Storing token and user data...');
             AuthManager.setToken(token);
             if (user) {
                 UserManager.setUser(user);
@@ -155,8 +167,8 @@ const AuthAPI = {
         console.log('🔍 Backend Response Structure:', {
             response: response,
             hasData: !!response.data,
+            hasAccessToken: !!(response.data && response.data.accessToken),
             hasToken: !!response.token,
-            hasDataToken: !!(response.data && response.data.token),
             responseKeys: Object.keys(response)
         });
         
@@ -164,18 +176,30 @@ const AuthAPI = {
         let token = null;
         let user = null;
         
-        if (response.data && response.data.token) {
+        if (response.data && response.data.accessToken) {
+            // Format: { data: { accessToken: "...", user: {...} } } - BACKEND STANDARD
+            token = response.data.accessToken;
+            user = response.data.user;
+            console.log('✅ Token found in response.data.accessToken');
+        } else if (response.data && response.data.token) {
             // Format: { data: { token: "...", user: {...} } }
             token = response.data.token;
             user = response.data.user;
+            console.log('✅ Token found in response.data.token');
+        } else if (response.accessToken) {
+            // Format: { accessToken: "...", user: {...} }
+            token = response.accessToken;
+            user = response.user;
+            console.log('✅ Token found in response.accessToken');
         } else if (response.token) {
             // Format: { token: "...", user: {...} }
             token = response.token;
             user = response.user;
+            console.log('✅ Token found in response.token');
         }
         
         if (token) {
-            console.log('✅ Token found, storing...');
+            console.log('✅ Storing token and user data...');
             AuthManager.setToken(token);
             if (user) {
                 UserManager.setUser(user);

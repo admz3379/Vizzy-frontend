@@ -223,15 +223,21 @@
             
             try {
                 console.log('🔐 Starting login process...');
+                console.log('📤 Sending credentials to API...');
                 const response = await window.VizzyAPI.Auth.login(email, password);
                 console.log('✅ Login API response:', response);
+                console.log('📊 Response type:', typeof response);
+                console.log('🔑 Response keys:', response ? Object.keys(response) : 'null');
                 
                 // Verify token was stored
                 const token = window.VizzyAPI.AuthManager.getToken();
                 console.log('🎟️ Token stored:', token ? 'YES' : 'NO');
+                console.log('🎟️ Token value:', token ? token.substring(0, 20) + '...' : 'null');
                 
                 if (!token) {
-                    throw new Error('Authentication token not received. Please try again.');
+                    console.error('❌ Token verification failed');
+                    console.error('❌ Full response dump:', JSON.stringify(response, null, 2));
+                    throw new Error('Authentication token not received. Please check browser console for details.');
                 }
                 
                 // Show success
@@ -245,6 +251,7 @@
                 }, 1500);
             } catch (error) {
                 console.error('❌ Login error:', error);
+                console.error('❌ Error stack:', error.stack);
                 errorDiv.textContent = error.message || 'Login failed. Please check your credentials.';
                 errorDiv.style.display = 'block';
                 button.disabled = false;

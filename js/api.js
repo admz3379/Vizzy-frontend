@@ -105,9 +105,37 @@ const AuthAPI = {
             requiresAuth: false
         });
         
+        // Enhanced debugging for response structure
+        console.log('🔍 Backend Response Structure:', {
+            response: response,
+            hasData: !!response.data,
+            hasToken: !!response.token,
+            hasDataToken: !!(response.data && response.data.token),
+            responseKeys: Object.keys(response)
+        });
+        
+        // Handle different response formats
+        let token = null;
+        let user = null;
+        
         if (response.data && response.data.token) {
-            AuthManager.setToken(response.data.token);
-            UserManager.setUser(response.data.user);
+            // Format: { data: { token: "...", user: {...} } }
+            token = response.data.token;
+            user = response.data.user;
+        } else if (response.token) {
+            // Format: { token: "...", user: {...} }
+            token = response.token;
+            user = response.user;
+        }
+        
+        if (token) {
+            console.log('✅ Token found, storing...');
+            AuthManager.setToken(token);
+            if (user) {
+                UserManager.setUser(user);
+            }
+        } else {
+            console.error('❌ No token in response:', response);
         }
         
         return response;
@@ -123,9 +151,37 @@ const AuthAPI = {
             requiresAuth: false
         });
         
+        // Enhanced debugging for response structure
+        console.log('🔍 Backend Response Structure:', {
+            response: response,
+            hasData: !!response.data,
+            hasToken: !!response.token,
+            hasDataToken: !!(response.data && response.data.token),
+            responseKeys: Object.keys(response)
+        });
+        
+        // Handle different response formats
+        let token = null;
+        let user = null;
+        
         if (response.data && response.data.token) {
-            AuthManager.setToken(response.data.token);
-            UserManager.setUser(response.data.user);
+            // Format: { data: { token: "...", user: {...} } }
+            token = response.data.token;
+            user = response.data.user;
+        } else if (response.token) {
+            // Format: { token: "...", user: {...} }
+            token = response.token;
+            user = response.user;
+        }
+        
+        if (token) {
+            console.log('✅ Token found, storing...');
+            AuthManager.setToken(token);
+            if (user) {
+                UserManager.setUser(user);
+            }
+        } else {
+            console.error('❌ No token in response:', response);
         }
         
         return response;
